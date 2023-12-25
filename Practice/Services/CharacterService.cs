@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using Practice.Data;
 using Practice.Dtos.Character;
 using Practice.Models;
 
@@ -14,15 +16,18 @@ public class CharacterService : ICharacterService
     };
 
     private readonly IMapper _mapper;
-    public CharacterService(IMapper mapper)
+    private readonly DataContext _context;
+    public CharacterService(IMapper mapper, DataContext context)
     {
         _mapper = mapper;
+        _context = context;
     }
     
     public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
     {
         var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
-        serviceResponse.Data = _characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+        var dbCharacters = await _context.Characters.ToListAsync();
+        serviceResponse.Data = dbCharacters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
     
         return serviceResponse;
     }
@@ -30,10 +35,9 @@ public class CharacterService : ICharacterService
     public async Task<ServiceResponse<GetCharacterDto>> GetCharacterById(int id)
     {
         var serviceResponse = new ServiceResponse<GetCharacterDto>();
-        
-        var character = _characters.FirstOrDefault(c => c.Id == id);
+        var dbCharacter = await _context.Characters.FirstOrDefaultAsync(c => c.Id == id);
 
-        if (character == null)
+        if (dbCharacter == null)
         {
             serviceResponse.Success = false;
             serviceResponse.Message = "Character not found.";
@@ -41,7 +45,7 @@ public class CharacterService : ICharacterService
         }
         
         // map the character to the GetCharacterDto with automapper
-        serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+        serviceResponse.Data = _mapper.Map<GetCharacterDto>(dbCharacter);
         
         return serviceResponse;
     }
