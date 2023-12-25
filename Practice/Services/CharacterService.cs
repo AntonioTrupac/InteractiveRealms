@@ -53,11 +53,23 @@ public class CharacterService : ICharacterService
     public async Task<ServiceResponse<List<GetCharacterDto>>> AddCharacter(AddCharacterDto newCharacter)
     {
         var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
-        var character = _mapper.Map<Character>(newCharacter);
-        character.Id = _characters.Max(c => c.Id) + 1;
-        _characters.Add(character);
+        
+        try
+        {
+            Character character = _mapper.Map<Character>(newCharacter);
 
-        serviceResponse.Data = _characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+            await _context.Characters.AddAsync(character);
+            await _context.SaveChangesAsync();
+
+            var dbCharacters = await _context.Characters.ToListAsync();
+            serviceResponse.Data = dbCharacters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+            serviceResponse.Message = "Character added successfully.";
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = ex.Message;
+        }
         return serviceResponse;
     }
 
@@ -66,26 +78,26 @@ public class CharacterService : ICharacterService
         var serviceResponse = new ServiceResponse<GetCharacterDto>();
         try 
         {
-            var character = _characters.FirstOrDefault(c => c.Id == updateCharacter.Id);
+            var character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == updateCharacter.Id);
         
-            if(character is null)
-                throw new Exception($"Character with ${updateCharacter.Id} not found.");
-            
-            // this can be done with automapper as well, and probably is cleaner
-            character.Name = updateCharacter.Name;
-            character.Defense = updateCharacter.Defense;
-            character.HitPoints = updateCharacter.HitPoints;
-            character.Intelligence = updateCharacter.Intelligence;
-            character.Strength = updateCharacter.Strength;
-            character.Class = updateCharacter.Class;
+            if (character == null)
+            {
+                throw new Exception("Character not found.");
+            }
 
+            _mapper.Map(updateCharacter, character);
+            _context.Characters.Update(character);
+            await _context.SaveChangesAsync();
 
             serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
-        } catch (Exception ex) {
+            serviceResponse.Message = "Character updated successfully.";
+        } 
+        catch (Exception ex) 
+        {
             serviceResponse.Success = false;
             serviceResponse.Message = ex.Message;
         }
-        
+    
         return serviceResponse;
     }
 
@@ -94,18 +106,26 @@ public class CharacterService : ICharacterService
         var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
         try
         {
-            var character = _characters.FirstOrDefault(c => c.Id == id);
+            var character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == id);
         
-            if(character is null)
-                throw new Exception($"Character with ${id} not found.");
-            
-            _characters.Remove(character);
-            serviceResponse.Data = _characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
-        } catch (Exception ex) {
+            if (character == null)
+            {
+                throw new Exception("Character not found.");
+            }
+
+            _context.Characters.Remove(character);
+            await _context.SaveChangesAsync();
+
+            var dbCharacters = await _context.Characters.ToListAsync();
+            serviceResponse.Data = dbCharacters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+            serviceResponse.Message = "Character deleted successfully.";
+        } 
+        catch (Exception ex) 
+        {
             serviceResponse.Success = false;
-            serviceResponse.Message = ex.Message;
+            serviceResponse.Message = ex.Message; // Or a more user-friendly message
         }
-        
+    
         return serviceResponse;
     }
 }
