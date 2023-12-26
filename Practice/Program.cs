@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 // register automapper
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<IQuestService, QuestService>();
 
 var app = builder.Build();
 

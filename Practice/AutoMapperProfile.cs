@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Practice.Dtos.Character;
+using Practice.Dtos.Quest;
 using Practice.Models;
 
 namespace Practice;
@@ -10,5 +11,8 @@ public class AutoMapperProfile : Profile
     {
         CreateMap<Character, GetCharacterDto>();
         CreateMap<AddCharacterDto, Character>();
+        CreateMap<Quest, GetQuestDto>();
+        CreateMap<AddQuestDto, Quest>();
+        CreateMap<UpdateQuestDto, Quest>();
     }
 }

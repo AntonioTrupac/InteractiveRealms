@@ -9,12 +9,6 @@ namespace Practice.Services;
 
 public class CharacterService : ICharacterService
 {
-    private static List<Character> _characters = new List<Character>()
-    {
-        new Character(),
-        new Character { Name = "Sam", Id = 1, Class = RpgClass.Rogue, Defense = 20, Intelligence = 35, HitPoints = 15, Strength = 25 },
-    };
-
     private readonly IMapper _mapper;
     private readonly DataContext _context;
     public CharacterService(IMapper mapper, DataContext context)
