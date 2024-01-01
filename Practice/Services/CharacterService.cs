@@ -122,4 +122,41 @@ public class CharacterService : ICharacterService
     
         return serviceResponse;
     }
+
+    public async Task<ServiceResponse<GetCharacterDto>> CompleteQuest(CompleteCharacterQuestDto completeQuest)
+    {
+        var serviceResponse = new ServiceResponse<GetCharacterDto>();
+
+        try {
+            var characterQuest = await _context.CharacterQuests
+            .FirstOrDefaultAsync(cq => cq.CharacterId == completeQuest.CharacterId && cq.QuestId == completeQuest.QuestId);
+
+            if (characterQuest == null ) {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Quest or character not found.";
+                return serviceResponse;
+            }
+
+            if (characterQuest.IsCompleted) {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "This quest has already been completed.";
+                return serviceResponse;
+            }
+            
+            characterQuest.IsCompleted = true;
+            characterQuest.DateCompleted = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            var updatedCharacter = await _context.Characters
+            .FirstOrDefaultAsync(c => c.Id == completeQuest.CharacterId);
+            serviceResponse.Data = _mapper.Map<GetCharacterDto>(updatedCharacter);
+
+        } catch (Exception ex) {
+            serviceResponse.Success = false;
+            serviceResponse.Message = ex.Message;
+        }
+
+        return serviceResponse;
+    }
 }

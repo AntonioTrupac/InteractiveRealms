@@ -27,10 +27,16 @@ public class CharacterController : ControllerBase
         return Ok(await _characterService.GetCharacterById(id));
     }
     
-    [HttpPost]
+    [HttpPost("AddCharacter")]
     public async Task<ActionResult<ServiceResponse<List<GetCharacterDto>>>> AddCharacter(AddCharacterDto newCharacter)
     {
         return Ok(await _characterService.AddCharacter(newCharacter));
+    }
+
+    [HttpPost("CompleteQuest")]
+    public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> CompleteQuest(CompleteCharacterQuestDto completeQuestDto)
+    {
+        return Ok(await _characterService.CompleteQuest(completeQuestDto));
     }
     
     [HttpPut]

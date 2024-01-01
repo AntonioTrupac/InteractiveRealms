@@ -11,6 +11,6 @@ public class CharacterQuest
     
     public DateTime DateAccepted { get; set; }
     public DateTime? DateCompleted { get; set; }
-    public int isCompleted { get; set; }
+    public bool IsCompleted { get; set; }
     public int Progress { get; set; }
 }
