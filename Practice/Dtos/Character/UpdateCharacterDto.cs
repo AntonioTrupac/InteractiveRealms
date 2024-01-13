@@ -10,5 +10,7 @@ public class UpdateCharacterDto
     public int Strength { get; set; } = 10;
     public int Defense { get; set; } = 10;
     public int Intelligence { get; set; } = 10;
+    public int XP { get; set; }
+    public int Level { get; set; }
     public RpgClass Class { get; set; } = RpgClass.Fighter;
 }

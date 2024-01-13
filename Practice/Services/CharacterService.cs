@@ -159,4 +159,25 @@ public class CharacterService : ICharacterService
 
         return serviceResponse;
     }
+
+    private static int CalculateXpGainedFromQuest(Quest quest, Character character) 
+    {
+        int baseXp = quest.Difficulty * 10;
+        // TODO: implement logic for calculating XP based on character level
+        // based on the character's level, the XP will be increased or decreased
+        // character's performance, quest completion speed, etc. will also affect XP
+        return baseXp;
+    }
+
+    // private static int XPNeededForNextLevel(Character character, bool isExponential = true)
+    // {
+    //     int xpForCurrentLevel = character.Level == 1 ? 0 : XPThresholdForNextLevel(character.Level - 1, isExponential);
+    //     int xpForNextLevel = XPThresholdForNextLevel(character.Level, isExponential);
+    //     return xpForNextLevel - character.XP;
+    // }
+
+    private static void ApplyLevelUp(Character character)
+    {
+        character.Level++;
+    }
 }
