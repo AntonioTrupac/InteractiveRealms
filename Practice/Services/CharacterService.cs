@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Practice.Data;
 using Practice.Dtos.Character;
 using Practice.Models;
+using Practice.Utilities;
 
 namespace Practice.Services;
 
@@ -146,11 +146,26 @@ public class CharacterService : ICharacterService
             characterQuest.IsCompleted = true;
             characterQuest.DateCompleted = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            // calculate xp
+            var quest = await _context.Quests.FirstOrDefaultAsync(q => q.Id == completeQuest.QuestId);
+            
+            if (quest == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Quest not found.";
+                return serviceResponse;
+            }
 
-            var updatedCharacter = await _context.Characters
-            .FirstOrDefaultAsync(c => c.Id == completeQuest.CharacterId);
-            serviceResponse.Data = _mapper.Map<GetCharacterDto>(updatedCharacter);
+            int xpGained = ExperienceManager.CalculateXpGainedFromQuest(quest, characterQuest.Character);
+            characterQuest.Character.XP += xpGained;
+
+            // check if character is eligible for level up
+            if (ExperienceManager.IsEligibleForLevelUp(characterQuest.Character)) {
+                ExperienceManager.ApplyLevelUp(characterQuest.Character);
+            }
+
+            await _context.SaveChangesAsync();
+            serviceResponse.Data = _mapper.Map<GetCharacterDto>(characterQuest.Character);
 
         } catch (Exception ex) {
             serviceResponse.Success = false;
@@ -158,26 +173,5 @@ public class CharacterService : ICharacterService
         }
 
         return serviceResponse;
-    }
-
-    private static int CalculateXpGainedFromQuest(Quest quest, Character character) 
-    {
-        int baseXp = quest.Difficulty * 10;
-        // TODO: implement logic for calculating XP based on character level
-        // based on the character's level, the XP will be increased or decreased
-        // character's performance, quest completion speed, etc. will also affect XP
-        return baseXp;
-    }
-
-    // private static int XPNeededForNextLevel(Character character, bool isExponential = true)
-    // {
-    //     int xpForCurrentLevel = character.Level == 1 ? 0 : XPThresholdForNextLevel(character.Level - 1, isExponential);
-    //     int xpForNextLevel = XPThresholdForNextLevel(character.Level, isExponential);
-    //     return xpForNextLevel - character.XP;
-    // }
-
-    private static void ApplyLevelUp(Character character)
-    {
-        character.Level++;
     }
 }

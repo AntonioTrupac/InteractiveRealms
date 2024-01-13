@@ -42,11 +42,17 @@ namespace Practice.Migrations
                     b.Property<int>("Intelligence")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Strength")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("XP")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

@@ -12,8 +12,8 @@ using Practice.Data;
 namespace Practice.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240113135439_AddXPAndLevelToCharacter")]
-    partial class AddXPAndLevelToCharacter
+    [Migration("20240113161516_AddXPAndLevelToCharacterFixed")]
+    partial class AddXPAndLevelToCharacterFixed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,11 +45,17 @@ namespace Practice.Migrations
                     b.Property<int>("Intelligence")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Strength")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("XP")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
