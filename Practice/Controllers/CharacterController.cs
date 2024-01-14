@@ -64,4 +64,17 @@ public class CharacterController : ControllerBase
     
         return Ok(response);
     }
+
+    [HttpPost("AllocateSkillPoint")]
+    public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> AllocateSkillPoint(AllocateSkillPointDto allocateSkillPointDto )
+    {
+        var response = await _characterService.AllocateSkillPoint(allocateSkillPointDto);
+
+        if (!response.Success)
+        {
+            return NotFound(response);
+        }
+
+        return Ok(response);
+    }
 }

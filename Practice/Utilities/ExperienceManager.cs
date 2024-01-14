@@ -41,5 +41,6 @@ public static class ExperienceManager
     public static void ApplyLevelUp(Character character)
     {
         character.Level++;
+        character.SkillPoints++;
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Practice.Data;
 using Practice.Dtos.Character;
+using Practice.Enums;
 using Practice.Models;
 using Practice.Utilities;
 
@@ -173,5 +174,68 @@ public class CharacterService : ICharacterService
         }
 
         return serviceResponse;
+    }
+
+    public async Task<ServiceResponse<GetCharacterDto>> AllocateSkillPoint(AllocateSkillPointDto allocateSkillPointDto)
+    {
+    var serviceResponse = new ServiceResponse<GetCharacterDto>();
+    
+    try
+    {
+        var character = await _context.Characters.FindAsync(allocateSkillPointDto.CharacterId);
+
+        if (character == null)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "Character not found";
+            return serviceResponse;
+        }
+
+        if (character.SkillPoints <= 0)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "No skill points available to allocate";
+            return serviceResponse;
+        }
+
+        if (!AllocateStatPoint(character, allocateSkillPointDto.StatName))
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "Invalid stat name provided";
+            return serviceResponse;
+        }
+
+        character.SkillPoints--;
+        await _context.SaveChangesAsync();
+        
+        serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = ex.Message;
+        }
+
+        return serviceResponse;
+    }
+
+    private static bool AllocateStatPoint(Character character, StatName statName)
+    {
+        switch (statName)
+        {
+            case StatName.Strength:
+                character.Strength++;
+                break;
+            case StatName.Defense:
+                character.Defense++;
+                break;
+            case StatName.Intelligence:
+                character.Intelligence++;
+                break;
+            default:
+                return false;
+        }
+
+        return true;
     }
 }

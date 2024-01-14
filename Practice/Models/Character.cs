@@ -12,6 +12,6 @@ public class Character
 
     public int XP { get; set; } = 0;
     public int Level { get; set; } = 1;
-    
+    public int SkillPoints { get; set; } = 0;
     public List<CharacterQuest>  CharacterQuests { get; set; }
 }
