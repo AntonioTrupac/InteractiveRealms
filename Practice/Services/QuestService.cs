@@ -134,4 +134,9 @@ public class QuestService : IQuestService
         }
         return serviceResponse;
     }
+
+    public Task<ServiceResponse<GetQuestDto>> SaveOrUpdateQuest(AddQuestDto newQuest)
+    {
+        throw new NotImplementedException();
+    }
 }
