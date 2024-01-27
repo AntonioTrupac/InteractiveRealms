@@ -135,8 +135,43 @@ public class QuestService : IQuestService
         return serviceResponse;
     }
 
-    public Task<ServiceResponse<GetQuestDto>> SaveOrUpdateQuest(AddQuestDto newQuest)
+    public async Task<ServiceResponse<GetQuestDto>> SaveOrUpdateQuest(AddQuestDto newQuest)
     {
-        throw new NotImplementedException();
+        var serviceResponse = new ServiceResponse<GetQuestDto>();
+        try
+        {
+            Quest quest = await _context.Quests.Include(q => q.RewardPool)
+                              .FirstOrDefaultAsync(q => q.Id == newQuest.Id) ?? 
+                          new Quest();
+            
+            _mapper.Map(newQuest, quest);
+        
+            if (newQuest.RewardPoolIds != null && newQuest.RewardPoolIds.Count > 0)
+            {
+                var rewardItems = await _context.Items
+                    .Where(item => newQuest.RewardPoolIds.Contains(item.Id))
+                    .ToListAsync();
+                quest.RewardPool = rewardItems;
+            }
+        
+            if (quest.Id == 0)
+            {
+                await _context.Quests.AddAsync(quest);
+            }
+            else
+            {
+                _context.Quests.Update(quest);
+            }
+
+            await _context.SaveChangesAsync();
+            serviceResponse.Data = _mapper.Map<GetQuestDto>(quest);
+        } 
+        catch (Exception ex)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = ex.Message;
+        }
+
+        return serviceResponse;
     }
 }

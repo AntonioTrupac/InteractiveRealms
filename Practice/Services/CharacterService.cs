@@ -131,7 +131,7 @@ public class CharacterService : ICharacterService
         try {
             var characterQuest = await _context.CharacterQuests
             .FirstOrDefaultAsync(cq => cq.CharacterId == completeQuest.CharacterId && cq.QuestId == completeQuest.QuestId);
-
+            
             if (characterQuest == null ) {
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Quest or character not found.";
@@ -156,6 +156,17 @@ public class CharacterService : ICharacterService
                 serviceResponse.Message = "Quest not found.";
                 return serviceResponse;
             }
+            
+            // Award item rewards if any
+            // TODO: Create inventory system
+            // TODO: Add item rewards to character inventory
+            // if (quest.ItemRewards.Any())
+            // {
+            //     foreach (var item in quest.ItemRewards)
+            //     {
+            //         characterQuest.Character.Item.Add(item);
+            //     }
+            // }
 
             int xpGained = ExperienceManager.CalculateXpGainedFromQuest(quest, characterQuest.Character);
             characterQuest.Character.XP += xpGained;

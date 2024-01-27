@@ -7,3 +7,12 @@ public enum ItemType
     Consumable,
     Material
 }
+
+public enum ItemRarity
+{
+    Common,
+    Uncommon,
+    Rare,
+    Epic,
+    Legendary
+}

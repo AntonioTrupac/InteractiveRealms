@@ -17,7 +17,7 @@ namespace Practice.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.14")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -90,6 +90,42 @@ namespace Practice.Migrations
                     b.ToTable("CharacterQuests");
                 });
 
+            modelBuilder.Entity("Practice.Models.Item", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CharacterId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("QuestId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("QuestId");
+
+                    b.ToTable("Items");
+                });
+
             modelBuilder.Entity("Practice.Models.Quest", b =>
                 {
                     b.Property<int>("Id")
@@ -105,7 +141,6 @@ namespace Practice.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Reward")
@@ -135,14 +170,35 @@ namespace Practice.Migrations
                     b.Navigation("Quest");
                 });
 
+            modelBuilder.Entity("Practice.Models.Item", b =>
+                {
+                    b.HasOne("Practice.Models.Character", "Character")
+                        .WithMany("Item")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Practice.Models.Quest", "Quest")
+                        .WithMany("ItemRewards")
+                        .HasForeignKey("QuestId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Quest");
+                });
+
             modelBuilder.Entity("Practice.Models.Character", b =>
                 {
                     b.Navigation("CharacterQuests");
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("Practice.Models.Quest", b =>
                 {
                     b.Navigation("CharacterQuests");
+
+                    b.Navigation("ItemRewards");
                 });
 #pragma warning restore 612, 618
         }

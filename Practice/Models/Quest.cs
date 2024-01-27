@@ -8,5 +8,5 @@ public class Quest
     public int Reward { get; set; }
     public int Difficulty { get; set; }
     public List<CharacterQuest>? CharacterQuests { get; set; }
-    public ICollection<Item> ItemRewards { get; set; } = new List<Item>();
+    public List<Item> RewardPool { get; set; } = new List<Item>();
 }
