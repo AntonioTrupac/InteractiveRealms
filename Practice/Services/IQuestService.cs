@@ -10,4 +10,5 @@ public interface IQuestService
     Task<ServiceResponse<List<GetQuestDto>>> AddQuest(AddQuestDto newQuest);
     Task<ServiceResponse<GetQuestDto>> UpdateQuest(UpdateQuestDto updatedQuest);
     Task<ServiceResponse<List<GetQuestDto>>> DeleteQuest(int id);
+    Task<ServiceResponse<GetQuestDto>> SaveOrUpdateQuest(AddQuestDto newQuest);
 }

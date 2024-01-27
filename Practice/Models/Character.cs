@@ -14,4 +14,5 @@ public class Character
     public int Level { get; set; } = 1;
     public int SkillPoints { get; set; } = 0;
     public List<CharacterQuest>  CharacterQuests { get; set; }
+    public ICollection<Item> Item { get; set; } = new List<Item>();
 }
