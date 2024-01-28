@@ -1,13 +1,11 @@
-using System.ComponentModel.DataAnnotations;
 using Practice.Enums;
 
-namespace Practice.Models;
+namespace Practice.Dtos.Item;
 
-public class Item
+public class GetItemDto
 {
     public int Id { get; set; }
-    public required string Name { get; set; }
-    [StringLength(255)]
+    public string Name { get; set; }
     public string? Description { get; set; }
     public ItemType Type { get; set; }
     public ItemRarity Rarity { get; set; }
@@ -15,9 +13,6 @@ public class Item
     public int? BonusStrength { get; set; }
     public int? BonusIntelligence { get; set; }
 
-    public int? CharacterId { get; set; }
-    public Character? Character { get; set; }
-
     public int? QuestId { get; set; }
-    public Quest? Quest { get; set; }
+    public string? QuestName { get; set; }
 }

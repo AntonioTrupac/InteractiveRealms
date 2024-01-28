@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Practice.Data;
+using Practice.Dtos.Item;
 using Practice.Dtos.Quest;
 using Practice.Models;
 
@@ -22,8 +23,9 @@ public class QuestService : IQuestService
         var serviceResponse = new ServiceResponse<List<GetQuestDto>>();
         try
         {
-            var dbQuests = await _context.Quests.ToListAsync();
-            serviceResponse.Data = dbQuests.Select(q => _mapper.Map<GetQuestDto>(q)).ToList();
+            var dbQuests = await _context.Quests.Include(q => q.RewardPool)
+                .ToListAsync();
+            serviceResponse.Data = _mapper.Map<List<GetQuestDto>>(dbQuests);
         } 
         catch (Exception ex)
         {
@@ -38,10 +40,14 @@ public class QuestService : IQuestService
         var serviceResponse = new ServiceResponse<GetQuestDto>();
         try
         {
-            var dbQuest = await _context.Quests.FirstOrDefaultAsync(q => q.Id == id);
+            var dbQuest = await _context.Quests.Include(q => q.RewardPool)
+                .FirstOrDefaultAsync(q => q.Id == id);
+            
             if (dbQuest != null)
-            {
-                serviceResponse.Data = _mapper.Map<GetQuestDto>(dbQuest);
+            {   
+                var questDto = _mapper.Map<GetQuestDto>(dbQuest);
+                questDto.RewardPool = dbQuest.RewardPool.Select(item => _mapper.Map<GetItemDto>(item)).ToList();
+                serviceResponse.Data = questDto;
             }
             else
             {

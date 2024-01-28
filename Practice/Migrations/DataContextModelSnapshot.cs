@@ -47,7 +47,8 @@ namespace Practice.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("SkillPoints")
                         .HasColumnType("integer");
@@ -98,11 +99,18 @@ namespace Practice.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BonusIntelligence")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("BonusStrength")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("CharacterId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -112,6 +120,9 @@ namespace Practice.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int?>("QuestId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Rarity")
                         .HasColumnType("integer");
 
                     b.Property<int>("Type")
@@ -178,7 +189,7 @@ namespace Practice.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Practice.Models.Quest", "Quest")
-                        .WithMany("ItemRewards")
+                        .WithMany("RewardPool")
                         .HasForeignKey("QuestId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -198,7 +209,7 @@ namespace Practice.Migrations
                 {
                     b.Navigation("CharacterQuests");
 
-                    b.Navigation("ItemRewards");
+                    b.Navigation("RewardPool");
                 });
 #pragma warning restore 612, 618
         }

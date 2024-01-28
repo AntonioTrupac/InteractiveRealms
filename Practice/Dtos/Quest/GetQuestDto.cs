@@ -1,4 +1,6 @@
-﻿namespace Practice.Dtos.Quest;
+﻿using Practice.Dtos.Item;
+
+namespace Practice.Dtos.Quest;
 
 public class GetQuestDto
 {
@@ -7,4 +9,7 @@ public class GetQuestDto
     public string Description { get; set; }
     public int Reward { get; set; }
     public int Difficulty { get; set; }
+    
+    public List<GetItemDto> RewardPool { get; set; } = new List<GetItemDto>();
+
 }
